@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
-import 'package:stacked/stacked.dart';
 import 'package:tik_tok/data/video.dart';
 import 'package:tik_tok/screens/messages_screen.dart';
 import 'package:tik_tok/screens/profile_screen.dart';
@@ -10,7 +10,7 @@ import 'package:tik_tok/widgets/bottom_bar.dart';
 import 'package:tik_tok/widgets/video_description.dart';
 import 'package:video_player/video_player.dart';
 
-import 'feed_viewmodel.dart';
+import '../controller/feed_controller.dart';
 
 class FeedScreen extends StatefulWidget {
   FeedScreen({Key? key}) : super(key: key);
@@ -21,39 +21,21 @@ class FeedScreen extends StatefulWidget {
 
 class _FeedScreenState extends State<FeedScreen> {
   final locator = GetIt.instance;
-  final feedViewModel = GetIt.instance<FeedViewModel>();
-  @override
-  void initState() {
-    feedViewModel.loadVideo(0);
-    feedViewModel.loadVideo(1);
-
-    super.initState();
-  }
+  final feedController = Get.put(FeedController());
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<FeedViewModel>.reactive(
-        disposeViewModel: false,
-        builder: (context, model, child) => videoScreen(),
-        viewModelBuilder: () => feedViewModel);
-  }
-
-  Widget videoScreen() {
     return Scaffold(
-      backgroundColor: GetIt.instance<FeedViewModel>().actualScreen == 0
+      backgroundColor: GetIt.instance<FeedController>().actualScreen == 0
           ? Colors.black
           : Colors.white,
-      body: scrollFeed(),
-    );
-  }
-
-  Widget scrollFeed() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Expanded(child: currentScreen()),
-        BottomBar(),
-      ],
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Expanded(child: currentScreen()),
+          const BottomBar(),
+        ],
+      ),
     );
   }
 
@@ -65,46 +47,50 @@ class _FeedScreenState extends State<FeedScreen> {
             initialPage: 0,
             viewportFraction: 1,
           ),
-          itemCount: feedViewModel.listVideos.length,
+          itemCount: feedController.listVideos.length,
           onPageChanged: (index) {
-            index = index % (feedViewModel.listVideos.length);
-            feedViewModel.changeVideo(index);
+            index = index % (feedController.listVideos.length);
+            feedController.changeVideo(index);
           },
           scrollDirection: Axis.vertical,
           itemBuilder: (context, index) {
-            index = index % (feedViewModel.listVideos.length);
-            return videoCard(feedViewModel.listVideos[index]);
+            index = index % (feedController.listVideos.length);
+            return videoCard(feedController.listVideos[index]);
           },
         ),
         SafeArea(
           child: Container(
             padding: const EdgeInsets.only(top: 20),
             child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  const Text('Following',
-                      style: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white70)),
-                  const SizedBox(
-                    width: 7,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const Text('Following',
+                    style: TextStyle(
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white70)),
+                const SizedBox(
+                  width: 7,
+                ),
+                Container(
+                  color: Colors.white70,
+                  height: 10,
+                  width: 1.0,
+                ),
+                const SizedBox(
+                  width: 7,
+                ),
+                const Text(
+                  'For You',
+                  style: TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                  Container(
-                    color: Colors.white70,
-                    height: 10,
-                    width: 1.0,
-                  ),
-                  const SizedBox(
-                    width: 7,
-                  ),
-                  const Text('For You',
-                      style: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white))
-                ]),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -112,7 +98,7 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   Widget currentScreen() {
-    switch (feedViewModel.actualScreen) {
+    switch (feedController.actualScreen) {
       case 0:
         return feedVideos();
       case 1:
@@ -139,14 +125,15 @@ class _FeedScreenState extends State<FeedScreen> {
                   }
                 },
                 child: SizedBox.expand(
-                    child: FittedBox(
-                  fit: BoxFit.cover,
-                  child: SizedBox(
-                    width: video.controller?.value.size.width ?? 0,
-                    height: video.controller?.value.size.height ?? 0,
-                    child: VideoPlayer(video.controller!),
+                  child: FittedBox(
+                    fit: BoxFit.cover,
+                    child: SizedBox(
+                      width: video.controller?.value.size.width ?? 0,
+                      height: video.controller?.value.size.height ?? 0,
+                      child: VideoPlayer(video.controller!),
+                    ),
                   ),
-                )),
+                ),
               )
             : Container(
                 color: Colors.black,
@@ -175,7 +162,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   void dispose() {
-    feedViewModel.controller?.dispose();
+    feedController.controller?.dispose();
     super.dispose();
   }
 }

@@ -1,10 +1,11 @@
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:stacked/stacked.dart';
 import 'package:tik_tok/data/demo_data.dart';
 import 'package:tik_tok/data/video.dart';
 import 'package:video_player/video_player.dart';
 
-class FeedViewModel extends BaseViewModel {
+class FeedController extends GetxController {
   VideoPlayerController? controller;
   List<Video> listVideos = <Video>[];
 
@@ -12,8 +13,12 @@ class FeedViewModel extends BaseViewModel {
 
   int actualScreen = 0;
 
-  FeedViewModel() {
+  @override
+  void onInit() {
     load();
+    loadVideo(0);
+    loadVideo(1);
+    super.onInit();
   }
 
   void load() async {
@@ -43,7 +48,7 @@ class FeedViewModel extends BaseViewModel {
     }
 
     prevVideo = index;
-    notifyListeners();
+    update();
 
     print(index);
   }
@@ -52,7 +57,7 @@ class FeedViewModel extends BaseViewModel {
     if (listVideos.length > index) {
       await listVideos[index].loadController();
       listVideos[index].controller?.play();
-      notifyListeners();
+      update();
     }
   }
 
@@ -63,6 +68,6 @@ class FeedViewModel extends BaseViewModel {
     } else {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     }
-    notifyListeners();
+    update();
   }
 }
