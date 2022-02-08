@@ -27,7 +27,7 @@ class ActionsToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 100.0,
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         _getFollowAction(pictureUrl: userPic),
@@ -45,7 +45,7 @@ class ActionsToolbar extends StatelessWidget {
   Widget _getSocialAction(
       {required String title, required IconData icon, bool isShare = false}) {
     return Container(
-        margin: EdgeInsets.only(top: 15.0),
+        margin: const EdgeInsets.only(top: 15.0),
         width: 60.0,
         height: 60.0,
         child: Column(children: [
@@ -63,7 +63,7 @@ class ActionsToolbar extends StatelessWidget {
 
   Widget _getFollowAction({required String pictureUrl}) {
     return Container(
-        margin: EdgeInsets.symmetric(vertical: 10.0),
+        margin:const  EdgeInsets.symmetric(vertical: 10.0),
         width: 60.0,
         height: 60.0,
         child:
@@ -78,9 +78,9 @@ class ActionsToolbar extends StatelessWidget {
           width: PlusIconSize, // PlusIconSize = 20.0;
           height: PlusIconSize, // PlusIconSize = 20.0;
           decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 43, 84),
+              color: const Color.fromARGB(255, 255, 43, 84),
               borderRadius: BorderRadius.circular(15.0)),
-          child: Icon(
+          child: const Icon(
             Icons.add,
             color: Colors.white,
             size: 20.0,
@@ -93,7 +93,7 @@ class ActionsToolbar extends StatelessWidget {
         left: (ActionWidgetSize / 2) - (ProfileImageSize / 2),
         child: Container(
             padding:
-                EdgeInsets.all(1.0), // Add 1.0 point padding to create border
+                const EdgeInsets.all(1.0), // Add 1.0 point padding to create border
             height: ProfileImageSize, // ProfileImageSize = 50.0;
             width: ProfileImageSize, // ProfileImageSize = 50.0;
             decoration: BoxDecoration(
@@ -105,8 +105,8 @@ class ActionsToolbar extends StatelessWidget {
                 child: CachedNetworkImage(
                   imageUrl: userPic,
                   placeholder: (context, url) =>
-                      new CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => new Icon(Icons.error),
+                      const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ))));
   }
 
@@ -115,7 +115,7 @@ class ActionsToolbar extends StatelessWidget {
         Colors.grey[900]!,
         Colors.grey[900]!,
         Colors.grey[800]!
-      ], stops: [
+      ], stops:const  [
         0.0,
         0.4,
         0.6,
@@ -140,8 +140,8 @@ class ActionsToolbar extends StatelessWidget {
                   child: CachedNetworkImage(
                     imageUrl: userPic,
                     placeholder: (context, url) =>
-                        new CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => new Icon(Icons.error),
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   ))),
         ]));
   }

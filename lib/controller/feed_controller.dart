@@ -1,8 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:stacked/stacked.dart';
 import 'package:tik_tok/data/demo_data.dart';
 import 'package:tik_tok/data/video.dart';
+import 'package:tik_tok/screens/feed_screen/widgets/feed_videos_widget.dart';
+import 'package:tik_tok/screens/messages_screen.dart';
+import 'package:tik_tok/screens/profile_screen.dart';
+import 'package:tik_tok/screens/search_screen.dart';
 import 'package:video_player/video_player.dart';
 
 class FeedController extends GetxController {
@@ -12,6 +16,7 @@ class FeedController extends GetxController {
   int prevVideo = 0;
 
   int actualScreen = 0;
+  Widget currentScreen = FeedVideoWidget();
 
   @override
   void onInit() {
@@ -19,6 +24,12 @@ class FeedController extends GetxController {
     loadVideo(0);
     loadVideo(1);
     super.onInit();
+  }
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
   }
 
   void load() async {
@@ -35,6 +46,7 @@ class FeedController extends GetxController {
     }
     return videoList;
   }
+
   changeVideo(index) async {
     print(listVideos.length);
     if (listVideos[index].controller == null) {
@@ -61,8 +73,30 @@ class FeedController extends GetxController {
     }
   }
 
+  void changeCurrentScreen() {
+    switch (actualScreen) {
+      case 0:
+        currentScreen = FeedVideoWidget();
+        break;
+      case 1:
+        currentScreen = SearchScreen();
+        break;
+
+      case 2:
+        currentScreen = MessagesScreen();
+        break;
+
+      case 3:
+        currentScreen = ProfileScreen();
+        break;
+    }
+    update();
+  }
+
   void setActualScreen(index) {
     actualScreen = index;
+    update();
+    changeCurrentScreen();
     if (index == 0) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     } else {
